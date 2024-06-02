@@ -1,11 +1,9 @@
 package dev.dexuby.minecraftplugin.server;
 
-import io.grpc.Server;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 public record ServerVersion(@NotNull String id,
