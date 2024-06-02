@@ -1,13 +1,9 @@
 package dev.dexuby.minecraftplugin;
 
 import com.intellij.icons.AllIcons;
-import com.intellij.ide.startup.importSettings.StartupImportIcons;
 import com.intellij.ide.util.projectWizard.WizardContext;
 import com.intellij.ide.wizard.*;
-import com.intellij.ui.JBColor;
-import com.intellij.util.ui.ColorIcon;
 import org.jetbrains.annotations.NotNull;
-import training.FeaturesTrainerIcons;
 
 import javax.swing.*;
 
