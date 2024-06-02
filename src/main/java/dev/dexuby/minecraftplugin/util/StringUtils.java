@@ -12,11 +12,28 @@ public final class StringUtils {
 
     }
 
+    /**
+     * Tames the provided artifact id by replacing certain characters to make it valid and naming convention compatible.
+     * Currently only replaces dash ('-') characters with underscores ('_').
+     *
+     * @param artifactId The input artifact id.
+     * @return The updated artifact id.
+     */
+
     public static String tameArtifactId(@NotNull final String artifactId) {
 
         return artifactId.replace('-', '_');
 
     }
+
+    /**
+     * Applies the provided properties to the provided input string, property identifiers in the provided input string
+     * have to be surrounded with percent signs ('%') in order to be identifiable.
+     *
+     * @param input      The input string.
+     * @param properties The properties.
+     * @return The updated string.
+     */
 
     public static String applyProperties(@NotNull final String input, @NotNull final Map<String, String> properties) {
 
