@@ -8,13 +8,14 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkTypeId;
-import com.intellij.openapi.projectRoots.SimpleJavaSdkType;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.roots.ui.configuration.JdkComboBox;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectSdksModel;
 import com.intellij.ui.components.JBTextField;
 import com.intellij.ui.dsl.builder.Cell;
 import com.intellij.ui.dsl.builder.Panel;
+import dev.dexuby.minecraftplugin.property.PropertyBinder;
+import dev.dexuby.minecraftplugin.property.Property;
 import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -24,14 +25,12 @@ import java.util.function.Consumer;
 public class ProjectSettingsStep extends AbstractNewProjectWizardStep {
 
     private final GraphProperty<Sdk> sdk = super.getPropertyGraph().lateinitProperty();
-
     private final GraphProperty<String> version = super.getPropertyGraph().property("1.0.0");
-    private final GraphProperty<String> authors = super.getPropertyGraph().lateinitProperty();
-
-    // Maven
+    private final GraphProperty<String> author = super.getPropertyGraph().lateinitProperty();
     private final GraphProperty<String> groupId = super.getPropertyGraph().property("org.example");
     private final GraphProperty<String> artifactId = super.getPropertyGraph().property("untitled");
 
+    private final PropertyBinder<String> propertyBinder = new PropertyBinder<>();
     private final ModuleBuilder moduleBuilder;
     private final JdkComboBox jdkComboBox;
 
@@ -52,7 +51,23 @@ public class ProjectSettingsStep extends AbstractNewProjectWizardStep {
                 this.sdk.set(jdk);
         });
 
+        this.bindStringProperties();
         this.preSelectBestJdk();
+
+    }
+
+    private void bindStringProperties() {
+
+        this.sdk.afterChange((sdk) -> {
+            this.propertyBinder.updateProperty(Property.JDK, sdk.getName());
+            this.propertyBinder.updateProperty(Property.JDK_TYPE, sdk.getSdkType().getName());
+            return Unit.INSTANCE;
+        });
+
+        this.propertyBinder.bind(Property.VERSION, this.version);
+        this.propertyBinder.bind(Property.AUTHOR, this.author);
+        this.propertyBinder.bind(Property.GROUP_ID, this.groupId);
+        this.propertyBinder.bind(Property.ARTIFACT_ID, this.artifactId);
 
     }
 
@@ -107,7 +122,7 @@ public class ProjectSettingsStep extends AbstractNewProjectWizardStep {
                 this.textField(row.textField(), 10, this.version.get(), this.version::set, true);
                 row.label("Author:");
                 row.contextHelp("", "The author of the project.");
-                this.textField(row.textField(), 15, null, this.authors::set, true);
+                this.textField(row.textField(), 15, null, this.author::set, true);
                 return Unit.INSTANCE;
             });
             return Unit.INSTANCE;
@@ -145,33 +160,15 @@ public class ProjectSettingsStep extends AbstractNewProjectWizardStep {
 
     }
 
-    public String getVersion() {
-
-        return this.version.get();
-
-    }
-
-    public String getAuthors() {
-
-        return this.authors.get();
-
-    }
-
-    public String getGroupId() {
-
-        return this.groupId.get();
-
-    }
-
-    public String getArtifactId() {
-
-        return this.artifactId.get();
-
-    }
-
     public Sdk getSdk() {
 
         return this.sdk.get();
+
+    }
+
+    public PropertyBinder<String> getPropertyBinder() {
+
+        return this.propertyBinder;
 
     }
 
