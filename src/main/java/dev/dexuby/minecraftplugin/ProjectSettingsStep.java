@@ -1,5 +1,6 @@
 package dev.dexuby.minecraftplugin;
 
+import com.intellij.ide.util.projectWizard.ModuleBuilder;
 import com.intellij.ide.wizard.AbstractNewProjectWizardStep;
 import com.intellij.ide.wizard.NewProjectWizardStep;
 import com.intellij.openapi.observable.properties.GraphProperty;
@@ -31,11 +32,15 @@ public class ProjectSettingsStep extends AbstractNewProjectWizardStep {
     private final GraphProperty<String> groupId = super.getPropertyGraph().property("org.example");
     private final GraphProperty<String> artifactId = super.getPropertyGraph().property("untitled");
 
+    private final ModuleBuilder moduleBuilder;
     private final JdkComboBox jdkComboBox;
 
-    public ProjectSettingsStep(@NotNull final NewProjectWizardStep parent) {
+    public ProjectSettingsStep(@NotNull final ModuleBuilder moduleBuilder,
+                               @NotNull final NewProjectWizardStep parent) {
 
         super(parent);
+
+        this.moduleBuilder = moduleBuilder;
 
         final ProjectSdksModel projectSdksModel = new ProjectSdksModel();
         projectSdksModel.reset(null);
@@ -71,7 +76,7 @@ public class ProjectSettingsStep extends AbstractNewProjectWizardStep {
             }
 
             final SdkTypeId jdkType = jdk.getSdkType();
-            if (!JdkComboBox.getSdkFilter(SimpleJavaSdkType.notSimpleJavaSdkType()).value(jdk)) continue;
+            if (!JdkComboBox.getSdkFilter(this.moduleBuilder::isSuitableSdkType).value(jdk)) continue;
 
             final SdkTypeId bestType = best.getSdkType();
             if (bestType == jdkType && bestType.versionComparator().compare(best, jdk) < 0)
@@ -98,9 +103,10 @@ public class ProjectSettingsStep extends AbstractNewProjectWizardStep {
         builder.group("Properties", false, (panel) -> {
             panel.row("", (row) -> {
                 row.label("Version:");
+                row.contextHelp("", "The project version in semantic format (major.minor.patch).");
                 this.textField(row.textField(), 10, this.version.get(), this.version::set, true);
-                row.label("Authors:");
-                row.contextHelp("", "The authors of the project.");
+                row.label("Author:");
+                row.contextHelp("", "The author of the project.");
                 this.textField(row.textField(), 15, null, this.authors::set, true);
                 return Unit.INSTANCE;
             });
@@ -110,8 +116,10 @@ public class ProjectSettingsStep extends AbstractNewProjectWizardStep {
         builder.group("Maven", false, (panel) -> {
             panel.row("", (row) -> {
                 row.label("GroupId:");
+                row.contextHelp("", "The group id of the project.");
                 this.textField(row.textField(), 10, this.groupId.get(), this.groupId::set, true);
                 row.label("ArtifactId:");
+                row.contextHelp("", "The artifact id of the project.");
                 this.textField(row.textField(), 10, this.artifactId.get(), this.artifactId::set, true);
                 return Unit.INSTANCE;
             });

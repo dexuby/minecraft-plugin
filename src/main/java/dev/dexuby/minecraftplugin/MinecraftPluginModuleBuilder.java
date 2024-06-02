@@ -40,7 +40,7 @@ public class MinecraftPluginModuleBuilder extends AbstractNewProjectWizardBuilde
         return new NewProjectWizardChainStep<>(new RootNewProjectWizardStep(wizardContext))
                 .nextStep(this::newProjectWizardBaseStepNoGap)
                 .nextStep(GitNewProjectWizardStep::new)
-                .nextStep(ProjectSettingsStep::new)
+                .nextStep((step) -> new ProjectSettingsStep(this, step))
                 .nextStep(MinecraftPluginAssetStep::new);
 
     }

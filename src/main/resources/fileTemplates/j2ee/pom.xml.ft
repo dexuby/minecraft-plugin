@@ -10,7 +10,7 @@
     <version>${VERSION}</version>
 
     <properties>
-        <author>${AUTHORS}</author>
+        <author>${AUTHOR}</author>
         <maven.compiler.source>${JDK}</maven.compiler.source>
         <maven.compiler.target>${JDK}</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

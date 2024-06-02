@@ -52,7 +52,7 @@ public class MinecraftPluginAssetStep extends AssetsNewProjectWizardStep {
         // Project settings
         properties.put("PROJECT_NAME", project.getName());
         properties.put("VERSION", parent.getVersion());
-        properties.put("AUTHORS", parent.getAuthors());
+        properties.put("AUTHOR", parent.getAuthors());
         // Maven
         properties.put("GROUP_ID", parent.getGroupId());
         properties.put("ARTIFACT_ID", parent.getArtifactId());
