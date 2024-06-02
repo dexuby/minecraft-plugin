@@ -2,4 +2,4 @@ name: ${project.name}
 version: ${project.version}
 author: ${author}
 main: ${project.groupId}.${project.artifactId}.${project.name}
-api-version: 1.19
+api-version: ${SERVER_VERSION_PLUGIN_TARGET}

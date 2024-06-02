@@ -73,16 +73,16 @@
 
     <repositories>
         <repository>
-            <id>papermc</id>
-            <url>https://papermc.io/repo/repository/maven-public/</url>
+            <id>${SERVER_VERSION_REPO_ID}</id>
+            <url>${SERVER_VERSION_REPO_URL}</url>
         </repository>
     </repositories>
 
     <dependencies>
         <dependency>
-            <groupId>io.papermc.paper</groupId>
-            <artifactId>paper-api</artifactId>
-            <version>1.19.2-R0.1-SNAPSHOT</version>
+            <groupId>${SERVER_VERSION_GROUP_ID}</groupId>
+            <artifactId>${SERVER_VERSION_ARTIFACT_ID}</artifactId>
+            <version>${SERVER_VERSION_VERSION}</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

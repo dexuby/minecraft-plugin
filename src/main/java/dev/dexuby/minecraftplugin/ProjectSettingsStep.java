@@ -11,26 +11,37 @@ import com.intellij.openapi.projectRoots.SdkTypeId;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.roots.ui.configuration.JdkComboBox;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectSdksModel;
+import com.intellij.openapi.ui.ComboBox;
+import com.intellij.ui.CollectionComboBoxModel;
 import com.intellij.ui.components.JBTextField;
 import com.intellij.ui.dsl.builder.Cell;
 import com.intellij.ui.dsl.builder.Panel;
+import com.intellij.ui.dsl.builder.SegmentedButton;
 import dev.dexuby.minecraftplugin.property.PropertyBinder;
 import dev.dexuby.minecraftplugin.property.Property;
+import dev.dexuby.minecraftplugin.server.ServerVersion;
+import dev.dexuby.minecraftplugin.server.Versions;
 import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Consumer;
 
+@SuppressWarnings("UnstableApiUsage")
 public class ProjectSettingsStep extends AbstractNewProjectWizardStep {
 
     private final GraphProperty<Sdk> sdk = super.getPropertyGraph().lateinitProperty();
+    private final GraphProperty<ServerVersion> serverVersion = super.getPropertyGraph().lateinitProperty();
     private final GraphProperty<String> version = super.getPropertyGraph().property("1.0.0");
     private final GraphProperty<String> author = super.getPropertyGraph().lateinitProperty();
     private final GraphProperty<String> groupId = super.getPropertyGraph().property("org.example");
     private final GraphProperty<String> artifactId = super.getPropertyGraph().property("untitled");
 
     private final PropertyBinder<String> propertyBinder = new PropertyBinder<>();
+    private final CollectionComboBoxModel<String> comboBoxModel = new CollectionComboBoxModel<>();
     private final ModuleBuilder moduleBuilder;
     private final JdkComboBox jdkComboBox;
 
@@ -61,6 +72,16 @@ public class ProjectSettingsStep extends AbstractNewProjectWizardStep {
         this.sdk.afterChange((sdk) -> {
             this.propertyBinder.updateProperty(Property.JDK, sdk.getName());
             this.propertyBinder.updateProperty(Property.JDK_TYPE, sdk.getSdkType().getName());
+            return Unit.INSTANCE;
+        });
+
+        this.serverVersion.afterChange((serverVersion) -> {
+            this.propertyBinder.updateProperty(Property.SERVER_VERSION_PLUGIN_TARGET, serverVersion.pluginTarget());
+            this.propertyBinder.updateProperty(Property.SERVER_VERSION_GROUP_ID, serverVersion.groupId());
+            this.propertyBinder.updateProperty(Property.SERVER_VERSION_ARTIFACT_ID, serverVersion.artifactId());
+            this.propertyBinder.updateProperty(Property.SERVER_VERSION_VERSION, serverVersion.version());
+            this.propertyBinder.updateProperty(Property.SERVER_VERSION_REPO_ID, serverVersion.repository().id());
+            this.propertyBinder.updateProperty(Property.SERVER_VERSION_REPO_URL, serverVersion.repository().url());
             return Unit.INSTANCE;
         });
 
@@ -115,6 +136,25 @@ public class ProjectSettingsStep extends AbstractNewProjectWizardStep {
             return Unit.INSTANCE;
         });
 
+        builder.row("Server version:", (row) -> {
+            final SegmentedButton<String> segmentedButton = row.segmentedButton(Arrays.asList("Spigot", "Paper"), ((itemPresentation, value) -> {
+                itemPresentation.setText(value);
+                return Unit.INSTANCE;
+            }));
+            segmentedButton.setSelectedItem("Paper");
+            segmentedButton.whenItemSelected(null, (value) -> {
+                this.updateServerVersionComboBox(value);
+                return Unit.INSTANCE;
+            });
+            row.cell(new ComboBox<>(this.comboBoxModel))
+                    .onChanged((value) -> {
+                        this.updateSelectedServerVersionId(Objects.requireNonNull(segmentedButton.getSelectedItem()), value.getItem());
+                        return Unit.INSTANCE;
+                    });
+            this.updateServerVersionComboBox(Objects.requireNonNull(segmentedButton.getSelectedItem()));
+            return Unit.INSTANCE;
+        });
+
         builder.group("Properties", false, (panel) -> {
             panel.row("", (row) -> {
                 row.label("Version:");
@@ -143,6 +183,24 @@ public class ProjectSettingsStep extends AbstractNewProjectWizardStep {
 
     }
 
+    private void updateServerVersionComboBox(@NotNull final String serverVersion) {
+
+        this.comboBoxModel.removeAll();
+        for (final ServerVersion version : Versions.getVersions(serverVersion))
+            this.comboBoxModel.add(version.id());
+        final String selected = this.comboBoxModel.getElementAt(0);
+        this.comboBoxModel.setSelectedItem(selected);
+
+    }
+
+    private void updateSelectedServerVersionId(@NotNull final String serverVersion, @NotNull final String id) {
+
+        final ServerVersion version = Versions.getVersion(serverVersion, id);
+        if (version != null)
+            this.serverVersion.set(version);
+
+    }
+
     private void textField(@NotNull final Cell<JBTextField> textFieldCell, final int columns, @Nullable final String defaultText, @NotNull final Consumer<String> setter, final boolean required) {
 
         textFieldCell.onChanged((field) -> {
@@ -163,6 +221,12 @@ public class ProjectSettingsStep extends AbstractNewProjectWizardStep {
     public Sdk getSdk() {
 
         return this.sdk.get();
+
+    }
+
+    public ServerVersion getServerVersion() {
+
+        return this.serverVersion.get();
 
     }
 
