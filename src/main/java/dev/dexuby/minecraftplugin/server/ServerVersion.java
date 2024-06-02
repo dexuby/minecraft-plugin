@@ -49,7 +49,7 @@ public record ServerVersion(@NotNull String id,
             shorterVersion = shortVersion;
         }
 
-        return new ServerVersion(name + " " + shortVersion, shorterVersion, groupId, name + "-api", shortVersion + "-R0.1-SNAPSHOT", repository);
+        return new ServerVersion(name + "-api " + shortVersion, shorterVersion, groupId, name + "-api", shortVersion + "-R0.1-SNAPSHOT", repository);
 
     }
 
