@@ -16,8 +16,8 @@
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
     <extensions defaultExtensionNs="com.intellij">
         <applicationService
-                serviceInterface="dev.dexuby.minecraftplugin.server.ServerTypeRegistry"
-                serviceImplementation="dev.dexuby.minecraftplugin.server.ServerTypeRegistryImpl"/>
+                serviceInterface="dev.dexuby.minecraftplugin.server.type.ServerTypeRegistry"
+                serviceImplementation="dev.dexuby.minecraftplugin.server.type.ServerTypeRegistryImpl"/>
         <moduleBuilder builderClass="dev.dexuby.minecraftplugin.MinecraftPluginModuleBuilder"/>
     </extensions>
 </idea-plugin>

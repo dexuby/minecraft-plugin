@@ -1,10 +1,8 @@
 package dev.dexuby.minecraftplugin.server.type;
 
 import dev.dexuby.minecraftplugin.server.ArtifactVersion;
-import dev.dexuby.minecraftplugin.server.ServerTypeRegistry;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collections;
 import java.util.List;
 
 public class ServerTypeLoader {

@@ -1,6 +1,5 @@
-package dev.dexuby.minecraftplugin.server;
+package dev.dexuby.minecraftplugin.server.type;
 
-import dev.dexuby.minecraftplugin.server.type.ServerType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;

@@ -20,7 +20,7 @@ import com.intellij.ui.dsl.builder.Panel;
 import com.intellij.ui.dsl.builder.SegmentedButton;
 import dev.dexuby.minecraftplugin.property.PropertyBinder;
 import dev.dexuby.minecraftplugin.property.Property;
-import dev.dexuby.minecraftplugin.server.ServerTypeRegistry;
+import dev.dexuby.minecraftplugin.server.type.ServerTypeRegistry;
 import dev.dexuby.minecraftplugin.server.ServerVersion;
 import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;

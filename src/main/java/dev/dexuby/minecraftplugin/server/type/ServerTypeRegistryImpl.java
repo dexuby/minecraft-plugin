@@ -1,7 +1,6 @@
-package dev.dexuby.minecraftplugin.server;
+package dev.dexuby.minecraftplugin.server.type;
 
 import com.intellij.openapi.components.Service;
-import dev.dexuby.minecraftplugin.server.type.ServerType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;

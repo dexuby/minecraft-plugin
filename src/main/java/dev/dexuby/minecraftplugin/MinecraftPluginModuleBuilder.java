@@ -5,7 +5,7 @@ import com.intellij.ide.util.projectWizard.WizardContext;
 import com.intellij.ide.wizard.*;
 import com.intellij.openapi.application.ApplicationManager;
 import dev.dexuby.minecraftplugin.server.type.ServerTypeLoader;
-import dev.dexuby.minecraftplugin.server.ServerTypeRegistry;
+import dev.dexuby.minecraftplugin.server.type.ServerTypeRegistry;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
