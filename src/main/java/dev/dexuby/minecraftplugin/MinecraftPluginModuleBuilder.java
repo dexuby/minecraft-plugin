@@ -3,6 +3,9 @@ package dev.dexuby.minecraftplugin;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.util.projectWizard.WizardContext;
 import com.intellij.ide.wizard.*;
+import com.intellij.openapi.application.ApplicationManager;
+import dev.dexuby.minecraftplugin.server.type.ServerTypeLoader;
+import dev.dexuby.minecraftplugin.server.ServerTypeRegistry;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -36,6 +39,10 @@ public class MinecraftPluginModuleBuilder extends AbstractNewProjectWizardBuilde
     @NotNull
     @Override
     protected NewProjectWizardStep createStep(@NotNull final WizardContext wizardContext) {
+
+        final ServerTypeRegistry serverTypeRegistry = ApplicationManager.getApplication().getService(ServerTypeRegistry.class);
+        if (!serverTypeRegistry.isHot())
+            new ServerTypeLoader(serverTypeRegistry).loadDefaults(false);
 
         return new NewProjectWizardChainStep<>(new RootNewProjectWizardStep(wizardContext))
                 .nextStep(this::newProjectWizardBaseStepNoGap)

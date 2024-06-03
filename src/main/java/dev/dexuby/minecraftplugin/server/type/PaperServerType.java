@@ -1,7 +1,6 @@
-package dev.dexuby.minecraftplugin.server.paper;
+package dev.dexuby.minecraftplugin.server.type;
 
 import dev.dexuby.minecraftplugin.server.Repository;
-import dev.dexuby.minecraftplugin.server.ServerTypeNew;
 import dev.dexuby.minecraftplugin.server.ArtifactVersion;
 import dev.dexuby.minecraftplugin.server.ServerVersion;
 import org.jetbrains.annotations.NotNull;
@@ -10,7 +9,7 @@ import java.net.http.HttpClient;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-public final class PaperServerType extends ServerTypeNew {
+public final class PaperServerType extends ServerType {
 
     public static final String ID = "Paper";
     public static final Repository REPO = new Repository("papermc", "https://papermc.io/repo/repository/maven-public/");

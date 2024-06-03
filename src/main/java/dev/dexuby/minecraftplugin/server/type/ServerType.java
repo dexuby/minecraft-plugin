@@ -1,5 +1,8 @@
-package dev.dexuby.minecraftplugin.server;
+package dev.dexuby.minecraftplugin.server.type;
 
+import dev.dexuby.minecraftplugin.server.ArtifactVersion;
+import dev.dexuby.minecraftplugin.server.Repository;
+import dev.dexuby.minecraftplugin.server.ServerVersion;
 import dev.dexuby.minecraftplugin.util.ServerUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -13,12 +16,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-public abstract class ServerTypeNew {
+public abstract class ServerType {
 
     private final HttpClient httpClient;
     private List<ServerVersion> serverVersions = new ArrayList<>();
 
-    public ServerTypeNew(@NotNull final HttpClient httpClient) {
+    public ServerType(@NotNull final HttpClient httpClient) {
 
         this.httpClient = httpClient;
 
@@ -53,7 +56,7 @@ public abstract class ServerTypeNew {
 
         return this.httpClient.sendAsync(HttpRequest.newBuilder(URI.create(endpoint))
                         .header("Content-Type", "application/json;charset=utf-8")
-                        .timeout(Duration.ofSeconds(1L))
+                        .timeout(Duration.ofSeconds(2L))
                         .POST(HttpRequest.BodyPublishers.ofString(body))
                         .build(), HttpResponse.BodyHandlers.ofString())
                 .handle((response, throwable) -> {
