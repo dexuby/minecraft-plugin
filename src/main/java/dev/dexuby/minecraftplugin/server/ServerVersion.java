@@ -53,18 +53,20 @@ public record ServerVersion(@NotNull String id,
 
     public static List<ServerVersion> ofRange(@NotNull final String shortVersionFrom, @NotNull final String shortVersionTo, @NotNull final Function<String, ServerVersion> factory) {
 
-        String[] versionParts = shortVersionFrom.split("\\.");
-        if (versionParts.length < 3)
-            return List.of(factory.apply(shortVersionFrom));
+        final String[] fromParts = shortVersionFrom.split("\\.");
+        if (fromParts.length < 3)
+            throw new IllegalArgumentException("Semantic format only (major.minor.patch).");
 
-        final int start = Integer.parseInt(versionParts[versionParts.length - 1]);
-        versionParts = shortVersionTo.split("\\.");
-        final int end = Integer.parseInt(versionParts[versionParts.length - 1]);
+        final int start = Integer.parseInt(fromParts[fromParts.length - 1]);
+        final String[] toParts = shortVersionTo.split("\\.");
+        if (fromParts.length != toParts.length)
+            throw new IllegalArgumentException("The version format of the provided versions does not match (major.minor.patch).");
+        final int end = Integer.parseInt(toParts[toParts.length - 1]);
 
         final List<ServerVersion> versions = new ArrayList<>();
         int counter = (end - start);
         while (counter >= 0) {
-            versions.add(factory.apply(versionParts[0] + "." + versionParts[1] + "." + (end - counter)));
+            versions.add(factory.apply(fromParts[0] + "." + fromParts[1] + "." + (end - counter)));
             counter--;
         }
 

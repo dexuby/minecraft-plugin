@@ -18,4 +18,10 @@ public final class Assets {
             MAIN_CLASS
     };
 
+    private Assets() {
+
+        throw new UnsupportedOperationException();
+
+    }
+
 }

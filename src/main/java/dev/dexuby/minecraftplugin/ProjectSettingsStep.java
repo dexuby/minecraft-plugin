@@ -19,6 +19,7 @@ import com.intellij.ui.dsl.builder.Panel;
 import com.intellij.ui.dsl.builder.SegmentedButton;
 import dev.dexuby.minecraftplugin.property.PropertyBinder;
 import dev.dexuby.minecraftplugin.property.Property;
+import dev.dexuby.minecraftplugin.server.ServerType;
 import dev.dexuby.minecraftplugin.server.ServerVersion;
 import dev.dexuby.minecraftplugin.server.Versions;
 import kotlin.Unit;
@@ -26,6 +27,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
 
@@ -129,18 +131,19 @@ public class ProjectSettingsStep extends AbstractNewProjectWizardStep {
     @Override
     public void setupUI(@NotNull final Panel builder) {
 
-        builder.row("JDK:", (row) -> {
+        builder.row(Lang.message("jdk"), (row) -> {
             row.cell(this.jdkComboBox)
-                    .addValidationRule("Please select a valid JDK.", (combBox) -> combBox.getSelectedJdk() == null);
+                    .addValidationRule(Lang.message("jdk-validation"), (combBox) -> combBox.getSelectedJdk() == null);
             return Unit.INSTANCE;
         });
 
-        builder.row("Server version:", (row) -> {
-            final SegmentedButton<String> segmentedButton = row.segmentedButton(Arrays.asList("Spigot", "Paper"), ((itemPresentation, value) -> {
+        builder.row(Lang.message("server-version"), (row) -> {
+            final List<String> friendServerTypeIds = Arrays.stream(ServerType.values()).map(ServerType::getFriendlyId).toList();
+            final SegmentedButton<String> segmentedButton = row.segmentedButton(friendServerTypeIds, ((itemPresentation, value) -> {
                 itemPresentation.setText(value);
                 return Unit.INSTANCE;
             }));
-            segmentedButton.setSelectedItem("Paper");
+            segmentedButton.setSelectedItem(friendServerTypeIds.get(0));
             segmentedButton.whenItemSelected(null, (value) -> {
                 this.updateServerVersionComboBox(value);
                 return Unit.INSTANCE;
@@ -154,26 +157,26 @@ public class ProjectSettingsStep extends AbstractNewProjectWizardStep {
             return Unit.INSTANCE;
         });
 
-        builder.group("Properties", false, (panel) -> {
+        builder.group(Lang.message("properties-group-title"), false, (panel) -> {
             panel.row("", (row) -> {
-                row.label("Version:");
-                row.contextHelp("", "The project version in semantic format (major.minor.patch).");
+                row.label(Lang.message("properties-group-version"));
+                row.contextHelp("", Lang.message("properties-group-version-help"));
                 this.textField(row.textField(), 10, this.version.get(), this.version::set, true);
-                row.label("Author:");
-                row.contextHelp("", "The author of the project.");
+                row.label(Lang.message("properties-group-author"));
+                row.contextHelp("", Lang.message("properties-group-author-help"));
                 this.textField(row.textField(), 15, null, this.author::set, true);
                 return Unit.INSTANCE;
             });
             return Unit.INSTANCE;
         });
 
-        builder.group("Maven", false, (panel) -> {
+        builder.group(Lang.message("maven-group-title"), false, (panel) -> {
             panel.row("", (row) -> {
-                row.label("GroupId:");
-                row.contextHelp("", "The group id of the project.");
+                row.label(Lang.message("maven-group-group-id"));
+                row.contextHelp("", Lang.message("maven-group-group-id-help"));
                 this.textField(row.textField(), 10, this.groupId.get(), this.groupId::set, true);
-                row.label("ArtifactId:");
-                row.contextHelp("", "The artifact id of the project.");
+                row.label(Lang.message("maven-group-artifact-id"));
+                row.contextHelp("", Lang.message("maven-group-artifact-id-help"));
                 this.textField(row.textField(), 10, this.artifactId.get(), this.artifactId::set, true);
                 return Unit.INSTANCE;
             });
@@ -182,19 +185,19 @@ public class ProjectSettingsStep extends AbstractNewProjectWizardStep {
 
     }
 
-    private void updateServerVersionComboBox(@NotNull final String serverVersion) {
+    private void updateServerVersionComboBox(@NotNull final String friendlyServerTypeId) {
 
         this.comboBoxModel.removeAll();
-        for (final ServerVersion version : Versions.getVersions(serverVersion))
+        for (final ServerVersion version : Versions.getVersions(ServerType.getByFriendlyId(friendlyServerTypeId, ServerType.values()[0])))
             this.comboBoxModel.add(version.id());
         final String selected = this.comboBoxModel.getElementAt(0);
         this.comboBoxModel.setSelectedItem(selected);
 
     }
 
-    private void updateSelectedServerVersionId(@NotNull final String serverVersion, @NotNull final String id) {
+    private void updateSelectedServerVersionId(@NotNull final String friendlyServerTypeId, @NotNull final String id) {
 
-        final ServerVersion version = Versions.getVersion(serverVersion, id);
+        final ServerVersion version = Versions.getVersion(ServerType.getByFriendlyId(friendlyServerTypeId, ServerType.values()[0]), id);
         if (version != null)
             this.serverVersion.set(version);
 
@@ -208,7 +211,7 @@ public class ProjectSettingsStep extends AbstractNewProjectWizardStep {
         });
 
         if (required)
-            textFieldCell.addValidationRule("This field is required.", (field) -> field.getText().isEmpty());
+            textFieldCell.addValidationRule(Lang.message("field-required"), (field) -> field.getText().isEmpty());
 
         final JBTextField textField = textFieldCell.getComponent();
         textField.setColumns(columns);

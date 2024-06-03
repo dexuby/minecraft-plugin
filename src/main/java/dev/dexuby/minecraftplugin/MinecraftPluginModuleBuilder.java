@@ -21,7 +21,7 @@ public class MinecraftPluginModuleBuilder extends AbstractNewProjectWizardBuilde
     @Override
     public String getDescription() {
 
-        return "This is a placeholder description.";
+        return "Easily create a plugin project for Minecraft servers.";
 
     }
 

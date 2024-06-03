@@ -6,12 +6,6 @@ import java.util.Map;
 
 public final class StringUtils {
 
-    private StringUtils() {
-
-        throw new UnsupportedOperationException();
-
-    }
-
     /**
      * Tames the provided artifact id by replacing certain characters to make it valid and naming convention compatible.
      * Currently only replaces dash ('-') characters with underscores ('_').
@@ -59,6 +53,12 @@ public final class StringUtils {
         }
 
         return output.toString();
+
+    }
+
+    private StringUtils() {
+
+        throw new UnsupportedOperationException();
 
     }
 
