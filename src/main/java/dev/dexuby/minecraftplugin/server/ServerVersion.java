@@ -13,27 +13,28 @@ public record ServerVersion(@NotNull String id,
                             @NotNull String version,
                             @NotNull Repository repository) {
 
-    public static ServerVersion ofSpigot(@NotNull final String shortVersion) {
+    public static String extractShortVersion(@NotNull final String version) {
 
-        return of(shortVersion, "spigot", "org.spigotmc", Repository.SPIGOT_REPO);
+        final int dashIndex = version.indexOf('-');
+        if (dashIndex == -1)
+            throw new IllegalArgumentException("Invalid version string: " + version);
 
-    }
-
-    public static List<ServerVersion> ofSpigotRange(@NotNull final String shortVersionFrom, @NotNull final String shortVersionTo) {
-
-        return ofRange(shortVersionFrom, shortVersionTo, ServerVersion::ofSpigot);
+        return version.substring(0, dashIndex);
 
     }
 
-    public static ServerVersion ofPaper(@NotNull final String shortVersion) {
+    public static String extractPluginTarget(@NotNull final String version) {
 
-        return of(shortVersion, "paper", "io.papermc.paper", Repository.PAPER_REPO);
+        final String shortVersion = extractShortVersion(version);
+        final String[] versionParts = shortVersion.split("\\.");
+        String shorterVersion;
+        if (versionParts.length >= 3) {
+            shorterVersion = versionParts[0] + "." + versionParts[1];
+        } else {
+            shorterVersion = shortVersion;
+        }
 
-    }
-
-    public static List<ServerVersion> ofPaperRange(@NotNull final String shortVersionFrom, @NotNull final String shortVersionTo) {
-
-        return ofRange(shortVersionFrom, shortVersionTo, ServerVersion::ofPaper);
+        return shorterVersion;
 
     }
 

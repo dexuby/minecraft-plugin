@@ -7,9 +7,17 @@
 
     <resource-bundle>messages.lang</resource-bundle>
 
+    <applicationListeners>
+        <listener class="dev.dexuby.minecraftplugin.PluginLoader"
+                  topic="com.intellij.ide.AppLifecycleListener"/>
+    </applicationListeners>
+
     <!-- Extension points defined by the plugin.
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
     <extensions defaultExtensionNs="com.intellij">
+        <applicationService
+                serviceInterface="dev.dexuby.minecraftplugin.server.ServerTypeRegistry"
+                serviceImplementation="dev.dexuby.minecraftplugin.server.ServerTypeRegistryImpl"/>
         <moduleBuilder builderClass="dev.dexuby.minecraftplugin.MinecraftPluginModuleBuilder"/>
     </extensions>
 </idea-plugin>

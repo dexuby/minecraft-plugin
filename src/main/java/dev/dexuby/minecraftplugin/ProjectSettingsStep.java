@@ -3,6 +3,7 @@ package dev.dexuby.minecraftplugin;
 import com.intellij.ide.util.projectWizard.ModuleBuilder;
 import com.intellij.ide.wizard.AbstractNewProjectWizardStep;
 import com.intellij.ide.wizard.NewProjectWizardStep;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.observable.properties.GraphProperty;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
@@ -19,14 +20,12 @@ import com.intellij.ui.dsl.builder.Panel;
 import com.intellij.ui.dsl.builder.SegmentedButton;
 import dev.dexuby.minecraftplugin.property.PropertyBinder;
 import dev.dexuby.minecraftplugin.property.Property;
-import dev.dexuby.minecraftplugin.server.ServerType;
+import dev.dexuby.minecraftplugin.server.ServerTypeRegistry;
 import dev.dexuby.minecraftplugin.server.ServerVersion;
-import dev.dexuby.minecraftplugin.server.Versions;
 import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
@@ -43,6 +42,7 @@ public class ProjectSettingsStep extends AbstractNewProjectWizardStep {
 
     private final PropertyBinder<String> propertyBinder = new PropertyBinder<>();
     private final CollectionComboBoxModel<String> comboBoxModel = new CollectionComboBoxModel<>();
+    private final ServerTypeRegistry serverTypeRegistry;
     private final ModuleBuilder moduleBuilder;
     private final JdkComboBox jdkComboBox;
 
@@ -52,6 +52,7 @@ public class ProjectSettingsStep extends AbstractNewProjectWizardStep {
         super(parent);
 
         this.moduleBuilder = moduleBuilder;
+        this.serverTypeRegistry = ApplicationManager.getApplication().getService(ServerTypeRegistry.class);
 
         final ProjectSdksModel projectSdksModel = new ProjectSdksModel();
         projectSdksModel.reset(null);
@@ -138,14 +139,14 @@ public class ProjectSettingsStep extends AbstractNewProjectWizardStep {
         });
 
         builder.row(Lang.message("server-version"), (row) -> {
-            final List<String> friendServerTypeIds = Arrays.stream(ServerType.values()).map(ServerType::getFriendlyId).toList();
-            final SegmentedButton<String> segmentedButton = row.segmentedButton(friendServerTypeIds, ((itemPresentation, value) -> {
+            final List<String> serverTypeIds = this.serverTypeRegistry.getIds();
+            final SegmentedButton<String> segmentedButton = row.segmentedButton(serverTypeIds, ((itemPresentation, value) -> {
                 itemPresentation.setText(value);
                 return Unit.INSTANCE;
             }));
-            segmentedButton.setSelectedItem(friendServerTypeIds.get(0));
-            segmentedButton.whenItemSelected(null, (value) -> {
-                this.updateServerVersionComboBox(value);
+            segmentedButton.setSelectedItem(serverTypeIds.get(0));
+            segmentedButton.whenItemSelected(null, (serverTypeId) -> {
+                this.updateServerVersionComboBox(serverTypeId);
                 return Unit.INSTANCE;
             });
             row.cell(new ComboBox<>(this.comboBoxModel))
@@ -185,19 +186,19 @@ public class ProjectSettingsStep extends AbstractNewProjectWizardStep {
 
     }
 
-    private void updateServerVersionComboBox(@NotNull final String friendlyServerTypeId) {
+    private void updateServerVersionComboBox(@NotNull final String serverTypeId) {
 
         this.comboBoxModel.removeAll();
-        for (final ServerVersion version : Versions.getVersions(ServerType.getByFriendlyId(friendlyServerTypeId, ServerType.values()[0])))
+        for (final ServerVersion version : this.serverTypeRegistry.get(serverTypeId).getVersions())
             this.comboBoxModel.add(version.id());
         final String selected = this.comboBoxModel.getElementAt(0);
         this.comboBoxModel.setSelectedItem(selected);
 
     }
 
-    private void updateSelectedServerVersionId(@NotNull final String friendlyServerTypeId, @NotNull final String id) {
+    private void updateSelectedServerVersionId(@NotNull final String serverTypeId, @NotNull final String id) {
 
-        final ServerVersion version = Versions.getVersion(ServerType.getByFriendlyId(friendlyServerTypeId, ServerType.values()[0]), id);
+        final ServerVersion version = this.serverTypeRegistry.get(serverTypeId).getVersionById(id);
         if (version != null)
             this.serverVersion.set(version);
 
