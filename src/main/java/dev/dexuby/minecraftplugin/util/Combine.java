@@ -8,12 +8,6 @@ import java.util.Objects;
 
 public final class Combine {
 
-    private Combine() {
-
-        throw new UnsupportedOperationException();
-
-    }
-
     public static <T> List<T> list(@NotNull final List<T> first, @NotNull final List<T> second) {
 
         return safe(first, second);
@@ -69,6 +63,12 @@ public final class Combine {
         }
 
         return output;
+
+    }
+
+    private Combine() {
+
+        throw new UnsupportedOperationException();
 
     }
 
