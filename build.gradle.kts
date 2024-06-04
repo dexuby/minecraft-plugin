@@ -10,7 +10,7 @@ version = "1.0.0"
 intellijPlatform {
     pluginConfiguration {
         id = "dev.dexuby.minecraftplugin"
-        name = "Minecraft Plugin"
+        name = "Minecraft Project Creator"
         description = """
             Plugin to create Minecraft plugin projects.
         """.trimIndent()
@@ -48,7 +48,7 @@ tasks {
     }
 
     patchPluginXml {
-        sinceBuild.set("232.*")
+        sinceBuild.set("232")
         untilBuild.set("241.*")
     }
 
