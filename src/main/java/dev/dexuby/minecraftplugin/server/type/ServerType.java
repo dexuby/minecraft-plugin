@@ -51,6 +51,14 @@ public abstract class ServerType {
 
     }
 
+    /**
+     * Attempts to fetch the available artifact versions from the provided nexus endpoint.
+     *
+     * @param endpoint The endpoint.
+     * @param body     The request body.
+     * @return The artifact version list.
+     */
+
     @NotNull
     protected CompletableFuture<List<ArtifactVersion>> fetchVersionsNexus(@NotNull final String endpoint, @NotNull final String body) {
 
@@ -65,17 +73,42 @@ public abstract class ServerType {
                     return ServerUtils.extractVersionsFromResponseData(response.body());
                 });
 
-
     }
+
+    /**
+     * Returns the id of the server type which is getting used to later identify it after the user makes a selection
+     * in the project setup wizard.
+     *
+     * @return The server type id.
+     */
 
     @NotNull
     public abstract String getId();
 
+    /**
+     * Attempts to fetch the available artifact versions.
+     *
+     * @return The artifact version list.
+     */
+
     @NotNull
     public abstract CompletableFuture<List<ArtifactVersion>> fetchVersions();
 
+    /**
+     * Converts the provided artifact version into a new server version.
+     *
+     * @param artifactVersion The artifact version.
+     * @return The converted server version.
+     */
+
     @NotNull
     public abstract ServerVersion createServerVersion(@NotNull final ArtifactVersion artifactVersion);
+
+    /**
+     * Returns the repository where artifacts of the server type are hosted at.
+     *
+     * @return The repository.
+     */
 
     @NotNull
     public abstract Repository getRepository();

@@ -8,6 +8,11 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Utility class for server types. This class should not be initialized, attempting to do so anyway utilizing
+ * reflection will throw an {@link UnsupportedOperationException}.
+ */
+
 public final class ServerUtils {
 
     private static final Pattern VERSIONS_DATA_PATTERN = Pattern.compile("\"data\":\\[(.*?)]");

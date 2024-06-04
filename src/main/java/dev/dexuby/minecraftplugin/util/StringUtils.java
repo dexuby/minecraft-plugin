@@ -4,6 +4,11 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
+/**
+ * Utility class for strings. This class should not be initialized, attempting to do so anyway utilizing
+ * reflection will throw an {@link UnsupportedOperationException}.
+ */
+
 public final class StringUtils {
 
     /**
